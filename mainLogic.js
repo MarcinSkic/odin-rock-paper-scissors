@@ -12,4 +12,32 @@ function computerPlay(){
             return undefined;
     }
 }
-console.log(computerPlay());
+
+function playRound(playerSelection, computerSelection){
+    playerSelection = fixPlayerInput(playerSelection);
+    if(playerSelection === computerSelection){
+        return 'Draw'
+    } else if(playerSelection === 'Rock'){
+        return checkWinner(playerSelection,computerSelection,'Scissors');
+    } else if(playerSelection === 'Paper'){
+        return checkWinner(playerSelection,computerSelection,'Rock');
+    } else if(playerSelection === 'Scissors'){
+        return checkWinner(playerSelection,computerSelection,'Paper');
+    } else {
+        return 'Incorrect input!';
+    }
+}
+
+function checkWinner(playerSelection, computerSelection, loosingComputerSelection){
+    if(computerSelection === loosingComputerSelection){
+        return `You won! ${playerSelection} beats ${computerSelection}`;
+    } else {
+        return `You lost! ${computerSelection} beats ${playerSelection}`;
+    }
+}
+
+function fixPlayerInput(playerSelection){
+    return `${playerSelection.substring(0,1).toUpperCase()}${playerSelection.substring(1).toLowerCase()}`
+}
+
+console.log(playRound('sciSSors',computerPlay()));
