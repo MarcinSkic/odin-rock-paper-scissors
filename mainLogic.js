@@ -3,11 +3,15 @@ game();
 function game(){
     let score = 0;
     for(let i = 0; i < 5; i++){
-        let playerSelection = prompt("What symbol you want to use? (Rock, Paper or Scissors)");
+        let playerSelection = prompt("What symbol you want to use? (Rock, Paper or Scissors)",'Rock');
+        if(playerSelection == null){
+            console.log('No input');
+            continue;
+        }
         let computerSelection = computerPlay();
         let result = playRound(playerSelection,computerSelection);
         if(isNaN(result)){
-            break;
+            continue;
         }
         score += result;
 
