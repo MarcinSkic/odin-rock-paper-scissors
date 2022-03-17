@@ -1,23 +1,42 @@
-game();
+const buttons = document.querySelectorAll('button');
+buttons.forEach(value => value.addEventListener('click',doButtonSelection));
 
-function game(){
-    let score = 0;
-    for(let i = 0; i < 5; i++){
-        let playerSelection = prompt("What symbol you want to use? (Rock, Paper or Scissors)",'Rock');
-        if(playerSelection == null){
-            console.log('No input');
-            continue;
-        }
-        let computerSelection = computerPlay();
-        let result = playRound(playerSelection,computerSelection);
-        if(isNaN(result)){
-            continue;
-        }
-        score += result;
+const scoreView = document.querySelector('#score');
+const resultView = document.querySelector('#result');
 
-        printResult(result,playerSelection,computerSelection);
+let playerScore = 0;
+let computerScore = 0;
 
-        console.log(`Current score: ${score}`);
+function doButtonSelection(e){
+    playRound(e.target.id);
+}
+
+function playRound(playerSelection){
+    
+    let computerSelection = computerPlay();
+    let result = getResult(playerSelection,computerSelection);
+
+    if(result === undefined){
+        return;
+    }
+
+    if(result){
+        playerScore++;
+    } else if(result!==null){
+        computerScore++;
+    }
+
+    resultView.textContent = getTextResult(result,playerSelection,computerSelection);
+    scoreView.textContent = `Current score: [${playerScore}:${computerScore}]`;
+
+    if(playerScore >= 5){
+        resultView.textContent = "YOU WON!";
+        resultView.style.color = 'green';
+        buttons.forEach(button =>button.removeEventListener('click',doButtonSelection));
+    } else if (computerScore >= 5){
+        resultView.textContent = "YOU LOST!";
+        resultView.style.color = 'red';
+        buttons.forEach(button =>button.removeEventListener('click',doButtonSelection));
     }
 }
 
@@ -36,10 +55,9 @@ function computerPlay(){
     }
 }
 
-function playRound(playerSelection, computerSelection){
-    playerSelection = fixPlayerInput(playerSelection);
+function getResult(playerSelection, computerSelection){
     if(playerSelection === computerSelection){
-        return 0;
+        return null;
     } else if(playerSelection === 'Rock'){
         return isPlayerWinner(computerSelection,'Scissors');
     } else if(playerSelection === 'Paper'){
@@ -47,29 +65,21 @@ function playRound(playerSelection, computerSelection){
     } else if(playerSelection === 'Scissors'){
         return isPlayerWinner(computerSelection,'Paper');
     } else {
-        console.log('Incorrect input!');
+        console.log(`Incorrect input! ${playerSelection}`);
         return undefined;
     }
 }
 
 function isPlayerWinner(computerSelection, loosingComputerSelection){
-    if(computerSelection === loosingComputerSelection){
-        return 1;
-    } else {
-        return -1;
-    }
+    return computerSelection === loosingComputerSelection;
 }
 
-function printResult(result, playerSelection, computerSelection){
-    if(result === 1){
-        console.log(`You won! ${playerSelection} beats ${computerSelection}`);
-    } else if(result === -1){
-        console.log(`You lost! ${computerSelection} beats ${playerSelection}`);
+function getTextResult(result, playerSelection, computerSelection){
+    if(result === true){
+        return `Round won! ${playerSelection} beats ${computerSelection}`;
+    } else if(result === false){
+        return `Round lost! ${computerSelection} beats ${playerSelection}`;
     } else {
-        console.log('Draw');
+        return 'Draw';
     }
-}
-
-function fixPlayerInput(playerSelection){
-    return `${playerSelection.substring(0,1).toUpperCase()}${playerSelection.substring(1).toLowerCase()}`
 }
